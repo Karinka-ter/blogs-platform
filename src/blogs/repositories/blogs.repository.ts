@@ -3,7 +3,7 @@ import {Blog} from "../types/blogs-type";
 import {BlogInputDto} from "../dto/blogs.input-dto";
 
 export const blogsRepository = {
-    findAll(): Blog[]{
+    findAll(): Blog[] {
         return db.blogs
     },
 
@@ -17,18 +17,13 @@ export const blogsRepository = {
 
     createBlog(dto: BlogInputDto): Blog {
         const blogId = Date.now().toString()
-        const newBlog:Blog =  {
-            id: blogId,
-            name: dto.name,
-            description: dto.description,
-            websiteUrl: dto.websiteUrl,
-        }
+        const newBlog = {id: blogId,...dto}
         db.blogs.push(newBlog);
         return newBlog
     },
 
-    updateBlog(id:string,dto: BlogInputDto): boolean {
-        const indexBlog = db.blogs.findIndex(blog=>blog.id === id)
+    updateBlog(id: string, dto: BlogInputDto): boolean {
+        const indexBlog = db.blogs.findIndex(blog => blog.id === id)
         if (indexBlog !== -1) {
             db.blogs[indexBlog].name = dto.name;
             db.blogs[indexBlog].description = dto.description;

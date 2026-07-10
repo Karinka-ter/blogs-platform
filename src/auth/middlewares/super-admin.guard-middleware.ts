@@ -5,13 +5,13 @@ export const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 export const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'qwerty';
 
 export const superAdminGuardMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const auth = req.headers['authorization'] as string; // 'Basic xxxx'
+    const auth = req.headers['authorization'] as string;
     if (!auth) {
         res.sendStatus(HttpStatus.Unauthorized);
         return;
     }
 
-    const [authType, token] = auth.split(' '); //admin:qwerty
+    const [authType, token] = auth.split(' ');
     if (authType !== 'Basic') {
         res.sendStatus(HttpStatus.Unauthorized);
         return;
@@ -25,5 +25,5 @@ export const superAdminGuardMiddleware = (req: Request, res: Response, next: Nex
         return;
     }
 
-    next(); // Успешная авторизация, продолжаем
+    next();
 };
