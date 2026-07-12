@@ -1,6 +1,7 @@
 {
   "name": "uber",
   "version": "1.0.0",
+  "packageManager": "pnpm@10.6.5",
   "main": "src/index.ts",
   "license": "MIT",
   "scripts": {
