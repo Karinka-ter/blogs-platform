@@ -2,8 +2,8 @@ import request from 'supertest';
 import express from 'express';
 import {setupApp} from '../src/setup-app';
 import {db} from "../src/db/in-memory.db";
-import {BLOGS_PATH} from "../src/core/paths/paths";
 import {ADMIN_PASSWORD, ADMIN_USERNAME} from "../src/auth/middlewares/super-admin.guard-middleware";
+import {BLOGS_PATH} from "../src/blogs/constants/blogs.paths";
 
 const createTestBlog = () => ({
     id: '1',
