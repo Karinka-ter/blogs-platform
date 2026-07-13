@@ -16,7 +16,7 @@ export const setupApp = (app: Express) => {
 
     app.use(BLOGS_PATH, blogsRouter);
     app.use(POST_PATH,postsRouter)
-    app.use(TESTING_PATH, testingRouter)
+    app.use("api/testing/all-data", testingRouter)
 
     setupSwagger(app);
     return app;
