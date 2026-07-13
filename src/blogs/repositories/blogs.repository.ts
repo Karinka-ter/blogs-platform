@@ -17,7 +17,7 @@ export const blogsRepository = {
 
     createBlog(dto: BlogInputDto): Blog {
         const blogId = Date.now().toString()
-        const newBlog = {id: blogId,...dto}
+        const newBlog = {id: blogId, ...dto}
         db.blogs.push(newBlog);
         return newBlog
     },
@@ -25,9 +25,7 @@ export const blogsRepository = {
     updateBlog(id: string, dto: BlogInputDto): boolean {
         const indexBlog = db.blogs.findIndex(blog => blog.id === id)
         if (indexBlog !== -1) {
-            db.blogs[indexBlog].name = dto.name;
-            db.blogs[indexBlog].description = dto.description;
-            db.blogs[indexBlog].websiteUrl = dto.websiteUrl;
+            db.blogs[indexBlog] = {...db.blogs[indexBlog], ...dto}
             return true
         }
         return false;
