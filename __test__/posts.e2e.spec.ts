@@ -2,7 +2,8 @@ import request from 'supertest';
 import express from 'express';
 import { setupApp } from '../src/setup-app';
 import { db } from '../src/db/in-memory.db';
-import {BLOGS_PATH, POST_PATH} from "../src/core/paths/paths";
+import {POSTS_PATH} from "../src/posts/constants/posts.paths";
+
 
 const ADMIN_AUTH = `Basic ${Buffer.from(
     'admin:qwerty',
@@ -24,7 +25,7 @@ const testPost = {
     blogName: 'My Blog',
 };
 
-describe(POST_PATH, () => {
+describe(POSTS_PATH, () => {
     const app = express();
     setupApp(app);
 
@@ -35,7 +36,7 @@ describe(POST_PATH, () => {
 
     it('should return empty array', async () => {
         await request(app)
-            .get(POST_PATH)
+            .get(POSTS_PATH)
             .expect(200, []);
     });
 
@@ -44,13 +45,13 @@ describe(POST_PATH, () => {
         db.posts.push({ ...testPost });
 
         await request(app)
-            .get(`${POST_PATH}/1`)
+            .get(`${POSTS_PATH}/1`)
             .expect(200, testPost);
     });
 
     it('should return 404 for non existing post', async () => {
         await request(app)
-            .get(`${POST_PATH}/999`)
+            .get(`${POSTS_PATH}/999`)
             .expect(404);
     });
 
@@ -58,7 +59,7 @@ describe(POST_PATH, () => {
         db.blogs.push({ ...testBlog });
 
         const response = await request(app)
-            .post(POST_PATH)
+            .post(POSTS_PATH)
             .set('Authorization', ADMIN_AUTH)
             .send({
                 title: 'Post title',
@@ -82,7 +83,7 @@ describe(POST_PATH, () => {
         db.blogs.push({ ...testBlog });
 
         await request(app)
-            .post(POST_PATH)
+            .post(POSTS_PATH)
             .set('Authorization', ADMIN_AUTH)
             .send({
                 title: '',
@@ -95,7 +96,7 @@ describe(POST_PATH, () => {
 
     it('should not create post for non existing blog', async () => {
         await request(app)
-            .post(POST_PATH)
+            .post(POSTS_PATH)
             .set('Authorization', ADMIN_AUTH)
             .send({
                 title: 'Post title',
@@ -111,7 +112,7 @@ describe(POST_PATH, () => {
         db.posts.push({ ...testPost });
 
         await request(app)
-            .put(`${POST_PATH}/1`)
+            .put(`${POSTS_PATH}/1`)
             .set('Authorization', ADMIN_AUTH)
             .send({
                 title: 'Updated title',
@@ -132,7 +133,7 @@ describe(POST_PATH, () => {
         db.blogs.push({ ...testBlog });
 
         await request(app)
-            .put(`${POST_PATH}/999`)
+            .put(`${POSTS_PATH}/999`)
             .set('Authorization', ADMIN_AUTH)
             .send({
                 title: 'Updated title',
@@ -148,7 +149,7 @@ describe(POST_PATH, () => {
         db.posts.push({ ...testPost });
 
         await request(app)
-            .delete(`${POST_PATH}/1`)
+            .delete(`${POSTS_PATH}/1`)
             .set('Authorization', ADMIN_AUTH)
             .expect(204);
 
@@ -157,14 +158,14 @@ describe(POST_PATH, () => {
 
     it('should return 404 when deleting non existing post', async () => {
         await request(app)
-            .delete(`${POST_PATH}/999`)
+            .delete(`${POSTS_PATH}/999`)
             .set('Authorization', ADMIN_AUTH)
             .expect(404);
     });
 
     it('should return 401 without authorization', async () => {
         await request(app)
-            .post(POST_PATH)
+            .post(POSTS_PATH)
             .send({
                 title: 'Post title',
                 shortDescription: 'Short description',

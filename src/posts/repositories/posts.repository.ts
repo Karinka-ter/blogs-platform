@@ -1,61 +1,39 @@
 import {db} from "../../db/in-memory.db";
 import {Post} from "../types/posts-type";
 import {PostsInputDto} from "../dto/posts.input-dto";
+import {blogsCollection, postsCollection} from "../../db/collections";
+import {ObjectId, WithId} from "mongodb";
 
 
 export const postsRepository = {
-    findAll(): Post[] {
-        return db.posts
+   async findAll(): Promise<WithId<Post>[]> {
+        return postsCollection.find().toArray();
     },
 
-    findById(id: string): Post | null {
-        const post = db.posts.find(post => id === post.id);
-        if (post) {
-            return post
+   async findById(id: string): Promise<WithId<Post> | null> {
+       return await postsCollection.findOne({_id: new ObjectId(id)})
+    },
+
+   async createPost(post: Post): Promise<WithId<Post> | null> {
+       const blog = await blogsCollection.findOne({_id: new ObjectId(post.blogId)});
+        if (blog) {
+            const insertResult = await postsCollection.insertOne(post)
+            return {...post,blogName: blog.name, _id: insertResult.insertedId}
         }
         return null
     },
 
-    createPost(dto: PostsInputDto): Post | null {
-        const blog = db.blogs.find(b => b.id === dto.blogId);
+   async updatePost(id: string, post: Post): Promise<boolean> {
+        const blog = await blogsCollection.findOne({_id: new ObjectId(post.blogId)});
         if (blog) {
-            const newPost: Post = {
-                id: Date.now().toString(),
-                title: dto.title,
-                shortDescription: dto.shortDescription,
-                content: dto.content,
-                blogId: dto.blogId,
-                blogName: blog.name
-            }
-
-            db.posts.push(newPost);
-            return newPost
+            const insertResult = await postsCollection.updateOne({_id: new ObjectId(id)}, post)
+            return insertResult.matchedCount > 0
         }
-        return null
+        return false
     },
 
-    updatePost(id: string, dto: PostsInputDto): boolean {
-        const blog = db.blogs.find(b => b.id === dto.blogId);
-        if (blog) {
-            const indexPost = db.posts.findIndex(post => id === post.id);
-            if (indexPost !== -1) {
-                db.posts[indexPost].title = dto.title;
-                db.posts[indexPost].shortDescription = dto.shortDescription;
-                db.posts[indexPost].content = dto.content;
-                db.posts[indexPost].blogId = dto.blogId;
-                db.posts[indexPost].blogName = blog.name;
-                return true;
-            }
-        }
-        return false;
-    },
-
-    deletePost(id:string):boolean {
-        const indexPost = db.posts.findIndex(post => id === post.id);
-        if (indexPost !== -1) {
-            db.posts.splice(indexPost, 1);
-           return true
-        }
-        return false;
+   async deletePost(id: string): Promise<boolean> {
+       const deleteResult = await postsCollection.deleteOne({_id: new ObjectId(id)});
+       return deleteResult.deletedCount > 0;
     }
 }

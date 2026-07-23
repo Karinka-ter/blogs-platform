@@ -1,50 +1,32 @@
-import {db} from "../../db/in-memory.db";
 import {Blog} from "../types/blogs-type";
-import {BlogInputDto} from "../dto/blogs.input-dto";
+import {blogsCollection} from "../../db/collections";
+import {ObjectId, WithId} from "mongodb";
 
 export const blogsRepository = {
-    findAll(): Blog[] {
-        return db.blogs
+    async findAll(): Promise<WithId<Blog>[]> {
+        return blogsCollection.find().toArray();
+    },
+    async findById(id: string): Promise<WithId<Blog> | null> {
+        return blogsCollection.findOne({_id: new ObjectId(id)});
     },
 
-    findById(id: string): Blog | null {
-        const blog = db.blogs.find(blog => id === blog.id);
-        if (blog) {
-            return blog
-        }
-        return null
+    async createBlog(newBlog: Blog): Promise<WithId<Blog>> {
+        const insertResult = await blogsCollection.insertOne(newBlog);
+        return {...newBlog, _id: insertResult.insertedId};
     },
 
-    createBlog(dto: BlogInputDto): Blog {
-        const blogId = Date.now().toString()
-        const newBlog = {id: blogId, ...dto}
-        db.blogs.push(newBlog);
-        return newBlog
-    },
-
-    updateBlog(id: string, dto: BlogInputDto): boolean {
-        const indexBlog = db.blogs.findIndex(blog => blog.id === id)
-        if (indexBlog !== -1) {
-            db.blogs[indexBlog] = {...db.blogs[indexBlog], ...dto}
-            return true
-        }
-        return false;
-    },
-
-    deleteBlog(id: string): boolean {
-        const indexBlog = db.blogs.findIndex(
-            blog => blog.id === id
+    async updateBlog(id: string, blog: Blog,): Promise<boolean> {
+        const updateResult = await blogsCollection.updateOne(
+            { _id: new ObjectId(id) },
+             blog
         );
 
-        if (indexBlog === -1) {
-            return false;
-        }
+        return updateResult.matchedCount > 0;
+    },
 
-        db.blogs.splice(indexBlog, 1);
-        db.posts = db.posts.filter(
-            post => post.blogId !== id
-        );
 
-        return true;
+   async deleteBlog(id: string):Promise<boolean> {
+    const deleteResult = await blogsCollection.deleteOne({_id: new ObjectId(id)});
+     return deleteResult.deletedCount > 0;
     }
 }

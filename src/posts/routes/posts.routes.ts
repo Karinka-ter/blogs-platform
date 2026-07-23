@@ -8,14 +8,15 @@ import {superAdminGuardMiddleware} from "../../auth/middlewares/super-admin.guar
 import {idValidation} from "../../core/middlewares/validator/params-id.validation-middleware";
 import {inputValidationResultMiddleware} from "../../core/middlewares/validator/input-validation-result.middleware";
 import {inputValidationDtoPostsMiddleware} from "../validation/inputValidationDtoPostsMiddleware";
+import {POSTS_ROUTE} from "../constants/posts.paths";
 
 export const postsRouter = Router({});
 
 postsRouter
-    .get("/", getPostsHandler)
-    .get('/:id', idValidation, inputValidationResultMiddleware, getPostByIdHandler)
-    .post('/', superAdminGuardMiddleware, inputValidationDtoPostsMiddleware, inputValidationResultMiddleware, createPostHandler)
-    .put('/:id', superAdminGuardMiddleware, idValidation, inputValidationDtoPostsMiddleware, inputValidationResultMiddleware, updatePostHandler)
-    .delete('/:id', superAdminGuardMiddleware, idValidation, inputValidationResultMiddleware, deletePostHandler)
+    .get(POSTS_ROUTE.ROOT, getPostsHandler)
+    .get(POSTS_ROUTE.DY_ID, idValidation, inputValidationResultMiddleware, getPostByIdHandler)
+    .post(POSTS_ROUTE.ROOT, superAdminGuardMiddleware, inputValidationDtoPostsMiddleware, inputValidationResultMiddleware, createPostHandler)
+    .put(POSTS_ROUTE.DY_ID, superAdminGuardMiddleware, idValidation, inputValidationDtoPostsMiddleware, inputValidationResultMiddleware, updatePostHandler)
+    .delete(POSTS_ROUTE.DY_ID, superAdminGuardMiddleware, idValidation, inputValidationResultMiddleware, deletePostHandler)
 
 
