@@ -1,19 +1,19 @@
-import {HttpStatus} from "../../../core/types/http-statuses";
-import {Request, Response} from "express";
 import {matchedData} from "express-validator";
 import {PaginationAndSorting} from "../../../core/types/pagination-and-sorting";
 import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helpers/set-default-sort-and-pagination";
-import {postsService} from "../../application/posts.servise";
+import {Request, Response} from "express";
+import {postsService} from "../../../posts/application/posts.servise";
 import {errorsHandler} from "../../../core/errors/errors.handler";
+import {HttpStatus} from "../../../core/types/http-statuses";
 
-export const getPostsHandler = async (req: Request, res: Response) => {
+export const getBlogsIdPostsHandler = async (req: Request<{ id: string }, {}, {}>, res: Response) => {
     try {
         const sanitizedQuery = matchedData<PaginationAndSorting<string>>(req, {
             locations: ['query'],
             includeOptionals: true,
         })
         const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery)
-        const {items , totalCount} = await postsService.findMany(queryInput)
+        const {items,totalCount} = await postsService.findMany(queryInput,req.params.id)
         res.status(HttpStatus.Ok).send({
             pagesCount: Math.ceil(totalCount / queryInput.pageSize),
             page: queryInput.pageNumber,
@@ -21,9 +21,7 @@ export const getPostsHandler = async (req: Request, res: Response) => {
             totalCount,
             items: items
         })
-    } catch(e: unknown) {
-        console.log(e);
-        errorsHandler(e,res)
+    } catch (err: unknown) {
+        errorsHandler(err,res)
     }
-
 }

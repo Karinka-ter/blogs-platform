@@ -1,5 +1,5 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import dotenv, {config} from 'dotenv';
 import { setupApp } from './setup-app';
 import { SETTINGS } from './settings/config';
 import { runDB } from './db/mongo.db';
@@ -9,6 +9,7 @@ dotenv.config();
 const bootstrap = async () => {
     const app = express();
     setupApp(app);
+
     const PORT = SETTINGS.PORT;
 
     await runDB(SETTINGS.MONGO_URL);

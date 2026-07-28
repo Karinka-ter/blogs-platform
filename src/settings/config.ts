@@ -8,3 +8,4 @@ export const SETTINGS = {
     MONGO_URL: env.MONGO_URL || "mongodb+srv://root:root@cluster0.nvzcrwp.mongodb.net/?appName=Cluster0",
     DB_NAME: env.DB_NAME || 'bloggers',
 };
+

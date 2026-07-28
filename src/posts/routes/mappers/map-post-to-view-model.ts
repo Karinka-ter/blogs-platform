@@ -4,6 +4,12 @@ import {Post, PostView} from "../../types/posts-type";
 export const mapPostToViewModel = (post: WithId<Post>): PostView=>{
     return {
         id: post._id.toString(),
-        ...post
+        title:post.title,
+        shortDescription: post.shortDescription,
+        content: post.content,
+        blogId: post.blogId,
+        blogName: post.blogName,
+        createdAt: post.createdAt,
+
     }
 }

@@ -1,12 +1,22 @@
 export type Blog = {
     "name": string,
     "description": string,
-    "websiteUrl": string
+    "websiteUrl": string,
+    "createdAt": Date,
+    "isMembership": boolean
 }
 
 export type BlogViewModel = {
     id: string
     "name": string,
     "description": string,
-    "websiteUrl": string
+    "websiteUrl": string,
+    "createdAt": Date,
+    "isMembership": boolean
+}
+
+export type BlogInputDto = {
+    name: string,
+    description: string,
+    websiteUrl: string
 }

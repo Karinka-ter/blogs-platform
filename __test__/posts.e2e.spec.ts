@@ -1,86 +1,87 @@
 import request from 'supertest';
-import express from 'express';
-import { setupApp } from '../src/setup-app';
-import { db } from '../src/db/in-memory.db';
+import express, {Express} from 'express';
+import {setupApp} from '../src/setup-app';
 import {POSTS_PATH} from "../src/posts/constants/posts.paths";
+import {runDB, stopDb} from "../src/db/mongo.db";
+import {SETTINGS} from "../src/settings/config";
+import {createTestBlog} from "./blogs.e2e.spec";
+
+
+
+beforeAll(async () => {
+    await runDB(SETTINGS.MONGO_URL);
+});
+
+afterAll(async () => {
+    await stopDb();
+});
 
 
 const ADMIN_AUTH = `Basic ${Buffer.from(
     'admin:qwerty',
 ).toString('base64')}`;
 
-const testBlog = {
-    id: '1',
-    name: 'My Blog',
-    description: 'Description',
-    websiteUrl: 'https://my-blog.com',
-};
+ export const createTestPost = async (app: Express, blogId:string) => {
+    const response = await request(app)
+        .post(POSTS_PATH)
+        .set('Authorization', ADMIN_AUTH)
+        .send({
+            title: 'Post title',
+            shortDescription: 'Short description',
+            content: 'Post content',
+            blogId: blogId
+        }).expect(201)
 
-const testPost = {
-    id: '1',
-    title: 'Post title',
-    shortDescription: 'Short description',
-    content: 'Post content',
-    blogId: '1',
-    blogName: 'My Blog',
-};
+    return response.body
+}
+
 
 describe(POSTS_PATH, () => {
     const app = express();
     setupApp(app);
 
-    beforeEach(() => {
-        db.blogs = [];
-        db.posts = [];
+    beforeEach(async () => {
+        await request(app)
+            .delete('/api/testing/all-data')
+            .expect(204);
     });
 
     it('should return empty array', async () => {
         await request(app)
             .get(POSTS_PATH)
-            .expect(200, []);
+            .expect(200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] });
     });
 
-    it('should return post by id', async () => {
-        db.blogs.push({ ...testBlog });
-        db.posts.push({ ...testPost });
+    it('return post by id', async () => {
+        const blog = await createTestBlog(app)
+        const post = await createTestPost(app,blog.id)
+        await request(app).get(`${POSTS_PATH}/${post.id}`).expect(200, post)
+    })
 
-        await request(app)
-            .get(`${POSTS_PATH}/1`)
-            .expect(200, testPost);
-    });
 
     it('should return 404 for non existing post', async () => {
         await request(app)
-            .get(`${POSTS_PATH}/999`)
+            .get(`${POSTS_PATH}/63189b06003380064c4193be`)
             .expect(404);
     });
 
     it('should create post', async () => {
-        db.blogs.push({ ...testBlog });
+        const blog = await createTestBlog(app)
+        const post = await createTestPost(app,blog.id)
 
-        const response = await request(app)
-            .post(POSTS_PATH)
-            .set('Authorization', ADMIN_AUTH)
-            .send({
-                title: 'Post title',
-                shortDescription: 'Short description',
-                content: 'Post content',
-                blogId: '1',
-            })
-            .expect(201);
-
-        expect(response.body).toEqual({
-            id: expect.any(String),
+        expect(post).toEqual({
+            id: post.id,
             title: 'Post title',
             shortDescription: 'Short description',
             content: 'Post content',
-            blogId: '1',
-            blogName: 'My Blog',
+            blogId: blog.id,
+            blogName: blog.name,
+            createdAt: post.createdAt,
         });
     });
 
     it('should not create post with incorrect data', async () => {
-        db.blogs.push({ ...testBlog });
+        const blog = await createTestBlog(app)
 
         await request(app)
             .post(POSTS_PATH)
@@ -89,7 +90,7 @@ describe(POSTS_PATH, () => {
                 title: '',
                 shortDescription: '',
                 content: '',
-                blogId: '',
+                blogId: blog.id,
             })
             .expect(400);
     });
@@ -102,63 +103,65 @@ describe(POSTS_PATH, () => {
                 title: 'Post title',
                 shortDescription: 'Short description',
                 content: 'Post content',
-                blogId: '999',
+                blogId: '63189b06003380064c4193be',
             })
-            .expect(400);
+            .expect(404);
     });
 
     it('should update post', async () => {
-        db.blogs.push({ ...testBlog });
-        db.posts.push({ ...testPost });
+        const blog = await createTestBlog(app)
+        const post = await createTestPost(app,blog.id)
 
         await request(app)
-            .put(`${POSTS_PATH}/1`)
+            .put(`${POSTS_PATH}/${post.id}`)
             .set('Authorization', ADMIN_AUTH)
             .send({
                 title: 'Updated title',
                 shortDescription: 'Updated short description',
                 content: 'Updated content',
-                blogId: '1',
+                blogId: blog.id,
             })
             .expect(204);
 
-        expect(db.posts[0].title).toBe('Updated title');
-        expect(db.posts[0].shortDescription).toBe(
+        const updatePostRequest = await request(app).get(`${POSTS_PATH}/${post.id}`).expect(200);
+
+        expect(updatePostRequest.body.title).toBe('Updated title');
+        expect(updatePostRequest.body.shortDescription).toBe(
             'Updated short description',
         );
-        expect(db.posts[0].content).toBe('Updated content');
+        expect(updatePostRequest.body.content).toBe('Updated content');
     });
 
     it('should not update non existing post', async () => {
-        db.blogs.push({ ...testBlog });
+        const blog = await createTestBlog(app)
 
         await request(app)
-            .put(`${POSTS_PATH}/999`)
+            .put(`${POSTS_PATH}/63189b06003380064c4193be`)
             .set('Authorization', ADMIN_AUTH)
             .send({
                 title: 'Updated title',
                 shortDescription: 'Updated short description',
                 content: 'Updated content',
-                blogId: '1',
+                blogId: blog.id,
             })
             .expect(404);
     });
 
     it('should delete post', async () => {
-        db.blogs.push({ ...testBlog });
-        db.posts.push({ ...testPost });
+        const blog = await createTestBlog(app)
+        const post = await createTestPost(app,blog.id)
 
         await request(app)
-            .delete(`${POSTS_PATH}/1`)
+            .delete(`${POSTS_PATH}/${post.id}`)
             .set('Authorization', ADMIN_AUTH)
             .expect(204);
 
-        expect(db.posts.length).toBe(0);
+        await request(app).get(`${POSTS_PATH}/${post.id}`).expect(404);
     });
 
     it('should return 404 when deleting non existing post', async () => {
         await request(app)
-            .delete(`${POSTS_PATH}/999`)
+            .delete(`${POSTS_PATH}/63189b06003380064c4193be`)
             .set('Authorization', ADMIN_AUTH)
             .expect(404);
     });

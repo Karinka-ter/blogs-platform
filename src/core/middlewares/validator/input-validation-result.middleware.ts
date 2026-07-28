@@ -6,7 +6,7 @@ import {
 } from '../../types/validation-error';
 import { HttpStatus } from '../../types/http-statuses';
 
-// Оборачивает список ошибок в единый формат ответа: { errorMessages: [...] }.
+
 export const createErrorMessages = (
     errors: ValidationErrorType[],
 ): ValidationErrorDto => {

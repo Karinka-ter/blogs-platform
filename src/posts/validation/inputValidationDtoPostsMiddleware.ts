@@ -25,15 +25,10 @@ const contentValidationMiddleware = body('content')
     .isLength({min: 1, max: 1000})
     .withMessage('Length min 1 max 1000')
 
-const blogIdValidationMiddleware = body('blogId')
-    .exists()
-    .isString()
-    .withMessage('Content must be a string')
+
 
 export const inputValidationDtoPostsMiddleware = [
     titleValidationMiddleware,
     shortDescriptionValidatorMiddleware,
     contentValidationMiddleware,
-    blogIdValidationMiddleware
-
 ]

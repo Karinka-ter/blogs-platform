@@ -33,7 +33,7 @@ const websiteUrlValidationMiddleware = body('websiteUrl')
     .withMessage('websiteUrl is invalid')
 
 
-export const inputValidationDtoMiddleware = [
+export const inputValidationBlogDtoMiddleware = [
     nameValidationMiddleware,
     descriptionValidationMiddleware,
     websiteUrlValidationMiddleware
