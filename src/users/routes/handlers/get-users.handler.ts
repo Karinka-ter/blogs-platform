@@ -14,8 +14,8 @@ export const getUsersHandler = async (req:Request,res:Response)=>{
         const {items,totalCount} = await usersQueryRepository.findAll(queryInput)
         return res.status(200).json({
             pagesCount: Math.ceil(totalCount / queryInput.pageSize),
-            page: req.query.pageNumber,
-            pageSize: req.query.pageSize,
+            page: queryInput.pageNumber,
+            pageSize: queryInput.pageSize,
             totalCount,
             items: items,
         })
