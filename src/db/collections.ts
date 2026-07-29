@@ -22,5 +22,5 @@ export function initCollections(db: Db): void {
 }
 
 export function getAllCollections(): Collection<any>[] {
-    return [blogsCollection, postsCollection];
+    return [blogsCollection, postsCollection,usersCollection];
 }
