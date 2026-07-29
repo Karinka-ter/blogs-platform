@@ -6,6 +6,7 @@ import {
 } from "../../core/middlewares/validator/query-pagination-sorting.validation.middleware";
 import {UserSortField} from "./input/UsersSortField";
 import {createUserHandler} from "./handlers/create-user.handler";
+import {deleteUserHandler} from "./handlers/delete-user.handler";
 
 
 export const usersRouter = Router({});
@@ -13,3 +14,4 @@ export const usersRouter = Router({});
 usersRouter
     .get(USERS_ROUTES.ROOT,paginationAndSortingValidation(UserSortField),getUsersHandler)
     .post(USERS_ROUTES.ROOT,createUserHandler)
+    .delete(USERS_ROUTES.DY_ID,deleteUserHandler)

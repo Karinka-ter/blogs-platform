@@ -12,7 +12,7 @@ export const usersService = {
         const id = await usersRepository.createUser(newUser)
         return await usersQueryRepository.findByIdOrFail(id)
     },
-    delete() {
-
+    async delete(id: string) {
+       await usersService.delete(id)
     }
 }
