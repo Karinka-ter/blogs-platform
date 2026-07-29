@@ -13,6 +13,6 @@ export const usersService = {
         return await usersQueryRepository.findByIdOrFail(id)
     },
     async delete(id: string) {
-       await usersService.delete(id)
+       await usersRepository.deleteUser(id)
     }
 }
