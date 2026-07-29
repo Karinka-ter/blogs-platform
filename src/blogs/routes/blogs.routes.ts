@@ -12,9 +12,9 @@ import {BLOGS_ROUTES} from "../constants/blogs.paths";
 import {
     paginationAndSortingValidation
 } from "../../core/middlewares/validator/query-pagination-sorting.validation.middleware";
-import {BlogsSortField} from "../input/BlogsSortField";
+import {BlogsSortField} from "./input/BlogsSortField";
 import {getBlogsIdPostsHandler} from "./handlers/get-blogs-id-posts.handler";
-import {PostsSortField} from "../../posts/input/PostsSortField";
+import {PostsSortField} from "../../posts/routes/input/PostsSortField";
 import {createPostByBlogIdHandler} from "./handlers/create-post-by-blogId.handler";
 import {inputValidationDtoPostsMiddleware} from "../../posts/validation/inputValidationDtoPostsMiddleware";
 

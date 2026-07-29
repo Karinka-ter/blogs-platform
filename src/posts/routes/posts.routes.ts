@@ -9,11 +9,15 @@ import {idValidation} from "../../core/middlewares/validator/params-id.validatio
 import {inputValidationResultMiddleware} from "../../core/middlewares/validator/input-validation-result.middleware";
 import {inputValidationDtoPostsMiddleware} from "../validation/inputValidationDtoPostsMiddleware";
 import {POSTS_ROUTE} from "../constants/posts.paths";
+import {
+    paginationAndSortingValidation
+} from "../../core/middlewares/validator/query-pagination-sorting.validation.middleware";
+import {PostsSortField} from "./input/PostsSortField";
 
 export const postsRouter = Router({});
 
 postsRouter
-    .get(POSTS_ROUTE.ROOT, getPostsHandler)
+    .get(POSTS_ROUTE.ROOT,paginationAndSortingValidation(PostsSortField), getPostsHandler)
     .get(POSTS_ROUTE.DY_ID, idValidation, inputValidationResultMiddleware, getPostByIdHandler)
     .post(POSTS_ROUTE.ROOT, superAdminGuardMiddleware, inputValidationDtoPostsMiddleware, inputValidationResultMiddleware, createPostHandler)
     .put(POSTS_ROUTE.DY_ID, superAdminGuardMiddleware, idValidation, inputValidationDtoPostsMiddleware, inputValidationResultMiddleware, updatePostHandler)

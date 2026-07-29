@@ -3,8 +3,8 @@ import {Request, Response} from "express";
 import {matchedData} from "express-validator";
 import {PaginationAndSorting} from "../../../core/types/pagination-and-sorting";
 import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helpers/set-default-sort-and-pagination";
-import {postsService} from "../../application/posts.servise";
 import {errorsHandler} from "../../../core/errors/errors.handler";
+import {postsQueryRepository} from "../../repositories/posts-query-repository";
 
 export const getPostsHandler = async (req: Request, res: Response) => {
     try {
@@ -12,8 +12,10 @@ export const getPostsHandler = async (req: Request, res: Response) => {
             locations: ['query'],
             includeOptionals: true,
         })
+
         const queryInput = setDefaultSortAndPaginationIfNotExist(sanitizedQuery)
-        const {items , totalCount} = await postsService.findMany(queryInput)
+
+        const {items , totalCount} = await postsQueryRepository.findAll(queryInput)
         res.status(HttpStatus.Ok).send({
             pagesCount: Math.ceil(totalCount / queryInput.pageSize),
             page: queryInput.pageNumber,
@@ -22,7 +24,6 @@ export const getPostsHandler = async (req: Request, res: Response) => {
             items: items
         })
     } catch(e: unknown) {
-        console.log(e);
         errorsHandler(e,res)
     }
 
