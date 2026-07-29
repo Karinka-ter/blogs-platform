@@ -4,3 +4,9 @@ export type User = {
     email: string
     createdAt: string
 }
+
+export type DtoModelUser = {
+    login: string,
+    password: string,
+    email: string
+}
