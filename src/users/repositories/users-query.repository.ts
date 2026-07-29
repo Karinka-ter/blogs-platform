@@ -31,7 +31,7 @@ export const usersQueryRepository = {
             .limit(pageSize)
             .toArray();
 
-        const totalCount = await blogsCollection.countDocuments(filter);
+        const totalCount = await usersCollection.countDocuments(filter);
         const usersViewModel = items.map(mapToUsersViewModel);
         return {items:usersViewModel,totalCount:totalCount}
     },
