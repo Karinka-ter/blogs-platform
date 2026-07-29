@@ -4,7 +4,12 @@ import {usersQueryRepository} from "../repositories/users-query.repository";
 
 export const usersService = {
     async create(dto: User) {
-        const id = await usersRepository.createUser(dto)
+        const newUser = {
+            ...dto,
+            createdAt: new Date().toString()
+        }
+
+        const id = await usersRepository.createUser(newUser)
         return await usersQueryRepository.findByIdOrFail(id)
     },
     delete() {
