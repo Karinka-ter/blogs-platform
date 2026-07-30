@@ -5,10 +5,9 @@ export type Post ={
     blogId: string,
     blogName: string,
     createdAt: Date,
-
 }
 
-export type InputPostType = {
+export type PostInputDto = {
     title: string,
     shortDescription: string,
     content: string,

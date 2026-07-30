@@ -1,4 +1,4 @@
-import {InputPostType, Post} from "../types/posts-type";
+import {Post, PostInputDto} from "../types/posts-type";
 import {postsCollection} from "../../db/collections";
 import {ObjectId} from "mongodb";
 import {RepositoryNotFoundError} from "../../core/errors/repository-not-found.errors";
@@ -12,7 +12,7 @@ export const postsRepository = {
     async updatePostsBlogName(id: string, name: string): Promise<void> {
         await postsCollection.updateMany({blogId: id}, {$set: {blogName: name}})
     },
-    async updatePost(id: string, post: InputPostType): Promise<void> {
+    async updatePost(id: string, post: PostInputDto): Promise<void> {
        const result =  await postsCollection.updateOne({_id: new ObjectId(id)}, {
                 $set: post,
             })

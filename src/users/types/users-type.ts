@@ -1,12 +1,18 @@
 export type User = {
-    id: string
     login: string
     email: string
     createdAt: string
 }
 
-export type DtoModelUser = {
+export type UserInputDtoType = {
     login: string,
     password: string,
     email: string
+}
+
+export type UserViewModel = {
+    id: string
+    login: string
+    email: string
+    createdAt: string
 }
