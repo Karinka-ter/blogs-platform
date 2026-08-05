@@ -9,6 +9,7 @@ import {TESTING_PATH} from "./testing/constants/testing.paths";
 import {POSTS_PATH} from "./posts/constants/posts.paths";
 import {USERS_PATH} from "./users/constans/users.paths";
 import {usersRouter} from "./users/routes/users.routes";
+import {authRouter} from "./auth/routes/auth.router";
 
 export const setupApp = (app: Express) => {
     app.use(express.json()); // middleware для парсинга JSON в теле запроса
@@ -20,6 +21,7 @@ export const setupApp = (app: Express) => {
     app.use(BLOGS_PATH, blogsRouter);
     app.use(POSTS_PATH,postsRouter)
     app.use(USERS_PATH, usersRouter)
+    app.use('api/auth/login',authRouter)
     app.use(TESTING_PATH, testingRouter)
 
     setupSwagger(app);

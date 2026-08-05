@@ -12,20 +12,22 @@ export const paginationAndSortingDefault: PaginationAndSorting<string> = {
     pageSize: DEFAULT_PAGE_SIZE,
     sortBy: DEFAULT_SORT_BY,
     sortDirection: DEFAULT_SORT_DIRECTION,
-    searchNameTerm: ''
+    searchNameTerm: '',
+    searchEmailTerm: '',
+    searchLoginTerm: ''
 };
 
 export function paginationAndSortingValidation<T extends string>(sortFieldsEnum: Record<string, T>) {
     return [
         query('pageNumber')
             .default(DEFAULT_PAGE_NUMBER)
-            .isInt({ min: 1 })
+            .isInt({min: 1})
             .withMessage('Page number must be a positive integer')
             .toInt(),
 
         query('pageSize')
             .default(DEFAULT_PAGE_SIZE)
-            .isInt({ min: 1, max: 100 })
+            .isInt({min: 1, max: 100})
             .withMessage('Page size must be between 1 and 100')
             .toInt(),
 
@@ -35,6 +37,16 @@ export function paginationAndSortingValidation<T extends string>(sortFieldsEnum:
             .withMessage(`Allowed sort fields: ${Object.values(sortFieldsEnum).join(', ')}`),
 
         query('searchNameTerm')
+            .optional()
+            .isString()
+            .trim(),
+
+        query('searchEmailTerm')
+            .optional()
+            .isString()
+            .trim(),
+
+        query('searchLoginTerm')
             .optional()
             .isString()
             .trim(),

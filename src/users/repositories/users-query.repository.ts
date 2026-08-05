@@ -12,18 +12,36 @@ export const usersQueryRepository = {
             pageSize,
             sortBy,
             sortDirection,
-            searchNameTerm
+            searchLoginTerm,
+            searchEmailTerm
         } = query;
 
         const skip = (pageNumber - 1) * pageSize;
         const filter: any = {}
 
-        if (searchNameTerm) {
-            filter.name = {
-                $regex: searchNameTerm,
-                $options: 'i',
-            };
+        if (searchLoginTerm || searchEmailTerm) {
+            filter.$or = [];
+
+            if (searchLoginTerm) {
+                filter.$or.push({
+                    login: {
+                        $regex: searchLoginTerm,
+                        $options: 'i'
+                    }
+                });
+            }
+
+            if (searchEmailTerm) {
+                filter.$or.push({
+                    email: {
+                        $regex: searchEmailTerm,
+                        $options: 'i'
+                    }
+                });
+            }
         }
+
+
         const items = await usersCollection
             .find(filter)
             .sort({ [sortBy]: sortDirection })
@@ -41,5 +59,17 @@ export const usersQueryRepository = {
             throw new RepositoryNotFoundError('User not found');
         }
         return mapToUsersViewModel(result);
+    },
+    async findByLoginOrEmail(loginOrEmail: string): Promise<User | null> {
+        const result = await usersCollection.findOne({
+            $or: [
+                {login: loginOrEmail},
+                {email: loginOrEmail}
+            ]
+        });
+        if (!result) {
+            return null
+        }
+        return result
     }
 }

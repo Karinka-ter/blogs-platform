@@ -45,10 +45,33 @@ describe(USERS_PATH, () => {
     it('create new user', async () => {
         await request(app)
             .post(USERS_PATH).set('Authorization', ADMIN_AUTH).send({
-                login: 'karinka-ter',
+                login: 'karinka',
                 password: 'Vqpkjcx2',
                 email: 'terv@mail.com',
             })
             .expect(201);
     });
+
+
+    it('bad request ', async () => {
+        await request(app)
+            .post(USERS_PATH).set('Authorization', ADMIN_AUTH).send({
+                login: 'karinkanjfvfvefbv',
+                password: '',
+                email: 'terv',
+            })
+            .expect(400);
+    });
+
+    it('delete a user', async () => {
+       const user = await request(app)
+            .post(USERS_PATH).set('Authorization', ADMIN_AUTH).send({
+                login: 'karinka',
+                password: 'Vqpkjcx2',
+                email: 'terv@mail.com',
+            })
+            .expect(201);
+
+       await request(app).delete(`/api/users/${user.body.id}`).set('Authorization', ADMIN_AUTH).expect(204);
+    })
 })
