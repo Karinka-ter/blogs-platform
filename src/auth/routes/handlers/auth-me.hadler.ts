@@ -1,13 +1,10 @@
 import {Request, Response} from "express";
-import {authService} from "../../application/auth.service";
+import {usersQueryRepository} from "../../../users/repositories/users-query.repository";
 import {HttpStatus} from "../../../core/types/http-statuses";
 
 export const authMeHandler = async (req: Request, res: Response) => {
-    const {login, password} = req.body;
-    const user = await authService.loginUser(login, password);
-    if (!user) {
-        res.sendStatus(HttpStatus.Unauthorized)
-        return
+    if(req.user){
+        const user = await usersQueryRepository.findByIdOrFail(req.user.userId)
+        res.status(HttpStatus.Ok).send(user)
     }
-    res.status(HttpStatus.Ok).send(user)
 }
