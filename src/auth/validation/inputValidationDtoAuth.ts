@@ -9,4 +9,4 @@ const passwordValidationMiddleware = body('password')
     .isString().withMessage('password must be a string')
     .trim()
 
-export const inputValidatorMiddleware = [loginInEmailValidationMiddleware, passwordValidationMiddleware];
+export const inputValidatorDtoAuthMiddleware = [loginInEmailValidationMiddleware, passwordValidationMiddleware];
