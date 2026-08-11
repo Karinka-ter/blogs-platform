@@ -15,7 +15,7 @@ export const authService = {
             return null;
         }
         const jwt = require("jsonwebtoken");
-        const token = jwt.sign({id: user.id},SECRET_KEY)
+        const token = jwt.sign({id: user.id},SECRET_KEY,{expiresIn: "1d"});
 
         return { accessToken: token };
     },
