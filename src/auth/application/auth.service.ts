@@ -1,6 +1,8 @@
 import {usersQueryRepository} from "../../users/repositories/users-query.repository";
 import argon2 from "argon2";
-import {User} from "../../users/types/users-type";
+import {User, UserViewModel} from "../../users/types/users-type";
+import {mapToUsersViewModel} from "../../users/routes/mappes/map-to-users-view-model";
+import {SECRET_KEY} from "../../settings/config";
 
 export const authService = {
     async loginUser(loginOrEmail: string, password: string,): Promise<{ accessToken: string } | null> {
@@ -12,19 +14,16 @@ export const authService = {
         if (!user) {
             return null;
         }
+        const jwt = require("jsonwebtoken");
+        const token = jwt.sign({id: user.id},SECRET_KEY)
 
-        return { accessToken: "token" };
+        return { accessToken: token };
     },
-    async me(loginOrEmail: string, password: string): Promise<User | null> {
-        const user = authService.checkUserCredentials(
-            loginOrEmail,
-            password,
-        )
-        if (!user) return null
-        return user
-    },
+    // async me(loginOrEmail: string, password: string): Promise<User | null> {
+    //     const user = await usersQueryRepository.findByLoginOrEmail(loginOrEmail);
+    // },
 
-    async checkUserCredentials(loginOrEmail: string, password: string,): Promise<User |null> {
+    async checkUserCredentials(loginOrEmail: string, password: string,): Promise<UserViewModel |null> {
         const user = await usersQueryRepository.findByLoginOrEmail(loginOrEmail);
         if (!user) return null;
         const isPasswordVerify = await argon2.verify(
@@ -32,6 +31,6 @@ export const authService = {
             password
         );
         if(!isPasswordVerify) return null;
-        return user
+        return mapToUsersViewModel(user);
     },
 };

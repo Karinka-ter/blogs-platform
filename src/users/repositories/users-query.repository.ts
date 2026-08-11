@@ -2,7 +2,7 @@ import {usersCollection} from "../../db/collections";
 import {PaginationAndSorting} from "../../core/types/pagination-and-sorting";
 import {User, UserViewModel} from "../types/users-type";
 import {mapToUsersViewModel} from "../routes/mappes/map-to-users-view-model";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 import {RepositoryNotFoundError} from "../../core/errors/repository-not-found.errors";
 
 export const usersQueryRepository = {
@@ -60,7 +60,7 @@ export const usersQueryRepository = {
         }
         return mapToUsersViewModel(result);
     },
-    async findByLoginOrEmail(loginOrEmail: string): Promise<User | null> {
+    async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<User> | null> {
         const result = await usersCollection.findOne({
             $or: [
                 {login: loginOrEmail},

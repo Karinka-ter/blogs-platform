@@ -7,6 +7,7 @@ export const authMeHandler = async (req: Request, res: Response) => {
     const user = await authService.loginUser(login, password);
     if (!user) {
         res.sendStatus(HttpStatus.Unauthorized)
+        return
     }
     res.status(HttpStatus.Ok).send(user)
 }

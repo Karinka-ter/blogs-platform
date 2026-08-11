@@ -6,4 +6,4 @@ import {authMeHandler} from "./handlers/auth-me.hadler";
 export const authRouter =  Router({})
 
 authRouter.post(AUTH_ROUTES.LOGIN,authLoginHandler)
-authRouter.get(AUTH_ROUTES.ME, authMeHandler)
+// authRouter.get(AUTH_ROUTES.ME, authMeHandler)
