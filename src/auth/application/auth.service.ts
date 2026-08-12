@@ -1,9 +1,8 @@
 import {usersQueryRepository} from "../../users/repositories/users-query.repository";
 import argon2 from "argon2";
-import {User, UserViewModel} from "../../users/types/users-type";
+import {UserViewModel} from "../../users/types/users-type";
 import {mapToUsersViewModel} from "../../users/routes/mappes/map-to-users-view-model";
-import {SECRET_KEY} from "../../settings/config";
-import jwt from "jsonwebtoken";
+import {jwtService} from "../../users/application/jwt-service";
 
 export const authService = {
     async loginUser(loginOrEmail: string, password: string,): Promise<{ accessToken: string } | null> {
@@ -16,7 +15,7 @@ export const authService = {
             return null;
         }
 
-        const token = jwt.sign({id: user.id},SECRET_KEY,{expiresIn: "1d"});
+        const token = jwtService.getJwt(user.id)
 
         return { accessToken: token };
     },

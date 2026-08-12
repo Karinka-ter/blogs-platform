@@ -1,30 +1,22 @@
 import {NextFunction, Request, Response} from "express";
-import jwt from "jsonwebtoken";
 import {HttpStatus} from "../../types/http-statuses";
-import {SECRET_KEY} from "../../../settings/config";
+import {jwtService} from "../../../users/application/jwt-service";
 
-export const tokenValidationMiddleware = (req:Request,res:Response,next: NextFunction)=>{
-    try{
-        const authHeader = req.headers.authorization;
-
-        if (!authHeader) {
-            return res.sendStatus(401);
-        }
-
-        const token = authHeader.split(' ')[1];
-
-        const decoded = jwt.verify(
-            token,
-            SECRET_KEY
-        ) as { userId: string };
-
-        req.user = {
-            userId: decoded.userId
-        };
-
-        next();
-    }catch(e:unknown){
-      res.sendStatus(HttpStatus.Unauthorized)
+export const tokenValidationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.sendStatus(HttpStatus.Unauthorized);
+        return
     }
+
+    const token = authHeader.split(' ')[1];
+    const userId = await jwtService.getUserById(token);
+    if (!userId) {
+        res.sendStatus(HttpStatus.Unauthorized);
+        return
+    }
+
+    req.user = {userId}
+    next();
 
 }
