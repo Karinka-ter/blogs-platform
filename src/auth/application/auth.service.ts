@@ -3,6 +3,7 @@ import argon2 from "argon2";
 import {User, UserViewModel} from "../../users/types/users-type";
 import {mapToUsersViewModel} from "../../users/routes/mappes/map-to-users-view-model";
 import {SECRET_KEY} from "../../settings/config";
+import jwt from "jsonwebtoken";
 
 export const authService = {
     async loginUser(loginOrEmail: string, password: string,): Promise<{ accessToken: string } | null> {
@@ -14,7 +15,7 @@ export const authService = {
         if (!user) {
             return null;
         }
-        const jwt = require("jsonwebtoken");
+
         const token = jwt.sign({id: user.id},SECRET_KEY,{expiresIn: "1d"});
 
         return { accessToken: token };
