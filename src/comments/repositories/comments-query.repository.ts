@@ -1,6 +1,7 @@
 import {commentsCollection} from "../../db/collections";
 import {ObjectId} from "mongodb";
 import {RepositoryNotFoundError} from "../../core/errors/repository-not-found.errors";
+import {mappingCommentViewModel} from "../routes/mappers/map-to-comment-view-model";
 
 export const commentsQueryRepository = {
     getCommentById: async(id:string)=>{
@@ -11,6 +12,6 @@ export const commentsQueryRepository = {
         if(!result){
             throw new RepositoryNotFoundError('comment not found')
         }
-        return result
+        return mappingCommentViewModel(result)
     }
 }
