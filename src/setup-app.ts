@@ -11,6 +11,8 @@ import {USERS_PATH} from "./users/constans/users.paths";
 import {usersRouter} from "./users/routes/users.routes";
 import {authRouter} from "./auth/routes/auth.router";
 import {AUTH_PATH} from "./auth/constants/auth.paths";
+import {COMMENTS_PATH} from "./comments/constants/comments.path";
+import {commentsRouter} from "./comments/routes/comments.router";
 
 export const setupApp = (app: Express) => {
     app.use(express.json()); // middleware для парсинга JSON в теле запроса
@@ -23,6 +25,7 @@ export const setupApp = (app: Express) => {
     app.use(POSTS_PATH,postsRouter)
     app.use(USERS_PATH, usersRouter)
     app.use(AUTH_PATH,authRouter)
+    app.use(COMMENTS_PATH,commentsRouter)
     app.use(TESTING_PATH, testingRouter)
 
     setupSwagger(app);
