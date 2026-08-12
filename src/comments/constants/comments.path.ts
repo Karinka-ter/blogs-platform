@@ -1,6 +1,6 @@
 export const COMMENTS_PATH = '/api/comments';
 
-export const AUTH_ROUTES = {
+export const COMMENTS_ROUTES = {
     ROOT: '',
-    DY_ID: '/:id'
+    BY_ID: '/:id'
 } as const
