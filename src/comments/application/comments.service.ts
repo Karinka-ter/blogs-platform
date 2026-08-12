@@ -17,7 +17,8 @@ export const commentsService = {
         return await commentsRepository.create(newComment)
     },
     update: async (commentId:string,updateContent:string,userId:string) => {
-       const comment = await commentsQueryRepository.getCommentById(commentId)
+
+        const comment = await commentsQueryRepository.getCommentById(commentId)
         if (comment.commentatorInfo.userId !== userId) {
             throw new DomainError(
                 'You can update only your own comments',

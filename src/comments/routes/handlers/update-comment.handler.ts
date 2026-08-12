@@ -7,6 +7,7 @@ export const updateCommentHandler = async (req: Request<{ commentId: string }, {
     content: string
 }>, res: Response) => {
     try {
+        console.log('ID FROM URL:', req.params.commentId);
         await commentsService.update(req.params.commentId, req.body.content,req.user!.userId)
         res.sendStatus(HttpStatus.NoContent)
     } catch (e: unknown) {
