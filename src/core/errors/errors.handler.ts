@@ -22,6 +22,11 @@ export function errorsHandler(error: unknown, res: Response): void {
     }
 
     if (error instanceof DomainError) {
+        if (error.code === 'COMMENT_FORBIDDEN') {
+             res.sendStatus(HttpStatus.Forbidden);
+            return
+        }
+
         const httpStatus = HttpStatus.UnprocessableEntity;
 
         res.status(httpStatus).send(
