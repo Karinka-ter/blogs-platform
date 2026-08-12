@@ -1,7 +1,6 @@
 import {usersQueryRepository} from "../../users/repositories/users-query.repository";
 import {commentsRepository} from "../repositories/comments.repository";
-import {commentsQueryRepository} from "../repositories/comments-query.repository";
-import {DomainError} from "../../core/errors/domain.errors";
+import {checkCommentOwnership} from "./utils/checkCommentOwnership";
 
 export const commentsService = {
     create: async (userId: string, content: string) => {
@@ -16,16 +15,12 @@ export const commentsService = {
         }
         return await commentsRepository.create(newComment)
     },
-    update: async (commentId:string,updateContent:string,userId:string) => {
-
-        const comment = await commentsQueryRepository.getCommentById(commentId)
-        if (comment.commentatorInfo.userId !== userId) {
-            throw new DomainError(
-                'You can update only your own comments',
-                'COMMENT_FORBIDDEN'
-            );
-        }
-
+    update: async (commentId: string, updateContent: string, userId: string) => {
+        await checkCommentOwnership(userId, commentId)
         await commentsRepository.update(commentId, updateContent)
+    },
+    delete: async (commentId: string, userId: string) => {
+        await checkCommentOwnership(userId, commentId)
+        await commentsRepository.delete(commentId)
     }
 }

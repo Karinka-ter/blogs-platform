@@ -12,5 +12,8 @@ export const commentsRepository = {
             {
                 $set: {content : updateContent},
             })
+    },
+    delete: async (commentId:string):Promise<void> =>{
+        await commentsCollection.deleteOne({_id: new ObjectId(commentId)})
     }
 }
