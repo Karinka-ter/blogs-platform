@@ -12,11 +12,12 @@ import {POSTS_ROUTE} from "../constants/posts.paths";
 import {
     paginationAndSortingValidation
 } from "../../core/middlewares/validator/query-pagination-sorting.validation.middleware";
-import {PostsSortField} from "./input/PostsSortField";
+import {PostsSortField} from "./input/posts-sort-field";
 import {getCommentsByPostIdHandler} from "./handlers/get-comments-by-post-id.handler";
 import {tokenValidationMiddleware} from "../../core/middlewares/validator/tokenValidation";
 import {inputValidationCommentDto} from "../../comments/validation/inputValidationCommentDto";
 import {createCommentHandler} from "./handlers/create-comment.handler";
+import {CommentsSortField} from "./input/comments-sort-field";
 
 export const postsRouter = Router({});
 
@@ -26,7 +27,7 @@ postsRouter
     .post(POSTS_ROUTE.ROOT, superAdminGuardMiddleware, inputValidationDtoPostsMiddleware, inputValidationResultMiddleware, createPostHandler)
     .put(POSTS_ROUTE.DY_ID, superAdminGuardMiddleware, idValidation, inputValidationDtoPostsMiddleware, inputValidationResultMiddleware, updatePostHandler)
     .delete(POSTS_ROUTE.DY_ID, superAdminGuardMiddleware, idValidation, inputValidationResultMiddleware, deletePostHandler)
-    .get(`${POSTS_ROUTE.DY_ID}/comments`, getCommentsByPostIdHandler)
+    .get(`${POSTS_ROUTE.DY_ID}/comments`,paginationAndSortingValidation(CommentsSortField), getCommentsByPostIdHandler)
     .post(`${POSTS_ROUTE.DY_ID}/comments`,tokenValidationMiddleware,inputValidationCommentDto,inputValidationResultMiddleware,createCommentHandler)
 
 
