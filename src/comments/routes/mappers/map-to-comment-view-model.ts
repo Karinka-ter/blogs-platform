@@ -2,7 +2,7 @@ import {WithId} from "mongodb";
 import {CommentType, CommentTypeViewModel} from "../../types/comments-type";
 
 export const mappingCommentViewModel =(comment:WithId<CommentType>):CommentTypeViewModel=>{
-    const commentViewModel:CommentTypeViewModel = {
+    return {
         id: comment._id.toString(),
         content:comment.content,
         commentatorInfo:{
@@ -11,5 +11,4 @@ export const mappingCommentViewModel =(comment:WithId<CommentType>):CommentTypeV
         },
         createdAt:comment.createdAt,
     }
-    return commentViewModel
 }
