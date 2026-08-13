@@ -5,8 +5,6 @@ import {mappingCommentViewModel} from "../routes/mappers/map-to-comment-view-mod
 
 export const commentsQueryRepository = {
     getCommentById: async(id:string)=>{
-
-
         const result = await commentsCollection.findOne({ _id: new ObjectId(id)})
 
         if(!result){
